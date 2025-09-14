@@ -43,28 +43,15 @@ from .models import (
 def register_view(request):
     """
     View para o registro de novos usuários.
-    Cria um novo usuário, gera um código de convite e atribui um bónus ao
-    referenciador, se um código válido for fornecido.
+    Cria um novo usuário e lida com o código de convite.
+    A lógica de bônus por convite foi REMOVIDA daqui.
+    O bônus de referência agora é dado APENAS na aprovação do depósito.
     """
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             with transaction.atomic():
                 user = form.save()
-                
-                invited_by_code = form.cleaned_data.get('invited_by_code')
-                if invited_by_code:
-                    try:
-                        # Procura pelo utilizador que convidou
-                        referrer = CustomUser.objects.get(my_invitation_code=invited_by_code)
-                        bonus_amount = Decimal('100.00')
-                        referrer.bonus_balance += bonus_amount
-                        # CORREÇÃO APLICADA AQUI: Adicionar o bônus também ao referral_income para rastreamento total
-                        referrer.referral_income += bonus_amount 
-                        referrer.save()
-                        messages.success(request, f"Parabéns! Você recebeu um bónus de Kz {bonus_amount} por convidar {user.username}.")
-                    except CustomUser.DoesNotExist:
-                        messages.error(request, "Código de convite inválido fornecido (problema interno).")
                 
             messages.success(request, 'Registo realizado com sucesso! Faça login para continuar.')
             return redirect('login')
@@ -572,7 +559,7 @@ def profile_view(request):
                     bank_account_instance = get_object_or_404(UserBankAccount, pk=bank_account_id, user=user)
                     bank_account_form_to_update = UserBankAccountForm(request.POST, instance=bank_account_instance)
                     
-                    if bank_account_form_to_valid():
+                    if bank_account_form_to_update.is_valid():
                         # Salva o formulário, mas não comita ainda
                         updated_account = bank_account_form_to_update.save(commit=False)
                         # Garante que a conta atualizada está ativa
@@ -742,26 +729,9 @@ def spin_lucky_wheel(request):
             LuckyWheelSpin.objects.create(
                 user=user,
                 prize_won=prize_won,
-                is_paid_spin=False
+                spin_date=timezone.now()
             )
-        
+            
         return redirect('lucky_wheel')
-    return redirect('home')
-
-
-@login_required
-def investment_levels_view(request):
-    """
-    View para exibir a lista de produtos (níveis de investimento).
-    Acessa a tabela de produtos e envia os dados para o template.
-    """
-    products = Product.objects.filter(is_active=True).order_by('order')
+    return redirect('lucky_wheel')
     
-    # O template espera a variável 'investment_levels', então vamos renomear aqui.
-    context = {
-        'investment_levels': products,
-        'user_balance': request.user.balance, # Adicionado para o template
-        'current_product_id': request.user.current_product.id if request.user.current_product else None,
-    }
-    
-    return render(request, 'core/investment_levels.html', context)

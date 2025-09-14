@@ -1,14 +1,15 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Registrar - LUXOTTICA_ORG{% endblock %}
+{% block title %}Registrar - LUXOTTICA{% endblock %}
 
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
         body {
-            background-color: #0d1a2f; /* Azul escuro */
-            color: #fff;
+            /* Fundo branco e gradiente de luzes */
+            background: radial-gradient(circle at 10% 20%, #ffffff 0%, #f0f8ff 25%, #e0eaff 50%, #d0e0ff 75%, #c0d0ff 100%);
+            color: #0d1a2f; /* Texto escuro */
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
@@ -17,53 +18,103 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
+            position: relative; /* Necessário para os efeitos de luz */
+            overflow: hidden; /* Para garantir que os 'raios de luz' não causem barras de rolagem */
         }
+
+        /* Efeito de luz sutil no fundo */
+        .light-effect {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(100, 149, 237, 0.5); /* CornflowerBlue com transparência */
+            filter: blur(80px);
+            animation: moveLight 15s infinite ease-in-out;
+            z-index: -1;
+        }
+
+        .light-effect:nth-child(1) {
+            top: 20%;
+            left: 15%;
+            animation-delay: 0s;
+        }
+
+        .light-effect:nth-child(2) {
+            bottom: 25%;
+            right: 20%;
+            animation-delay: 5s;
+        }
+
+        @keyframes moveLight {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(50px, -50px) scale(1.1); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
         .register-container {
-            background-color: #1a2a47; /* Um azul um pouco mais claro para o contêiner */
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            background-color: rgba(255, 255, 255, 0.9); /* Contêiner semi-transparente branco */
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
             text-align: center;
+            backdrop-filter: blur(10px); /* Efeito de vidro fosco */
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
+
+        .header-luxottica {
+            font-family: 'Georgia', serif;
+            font-size: 2.5em;
+            color: #1a2a47; /* Azul escuro */
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
         .register-container h2 {
-            color: #4CAF50; /* Verde vibrante para o título */
+            color: #007bff; /* Azul vibrante */
             margin-bottom: 25px;
             font-size: 1.8em;
+            font-weight: 600;
         }
+        
         .form-group {
             margin-bottom: 20px;
             text-align: left;
         }
+        
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: #bbb;
+            color: #333;
+            font-weight: bold;
             font-size: 0.9em;
         }
-        /* Aplica a inputs text e password */
+        
         .form-group input[type="text"],
         .form-group input[type="password"] {
-            width: calc(100% - 20px);
+            width: calc(100% - 22px);
             padding: 12px 10px;
-            border: 1px solid #3a4a67;
-            border-radius: 5px;
-            background-color: #0f1f3a;
-            color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f7f7f7;
+            color: #333;
             font-size: 1em;
             outline: none;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
+        
         .form-group input[type="text"]:focus,
         .form-group input[type="password"]:focus {
             border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
         }
         
-        /* --- ESTILOS CRÍTICOS PARA MENSAGENS DE ERRO --- */
         .form-group ul.errorlist {
-            color: #ff4d4d !important; /* Força a cor vermelha para erros de campo */
-            display: block !important; /* Garante que seja visível */
+            color: #dc3545 !important;
+            display: block !important;
             list-style: none;
             padding: 0;
             margin-top: 5px;
@@ -72,10 +123,9 @@
             text-align: left;
         }
 
-        /* Estilo para erros não específicos de campo (non_field_errors) */
-        .register-container .errorlist { /* Alvo os errorlist fora dos form-group */
-            color: #ff4d4d !important; /* Força a cor vermelha para erros globais */
-            display: block !important; /* Garante que seja visível */
+        .register-container .errorlist {
+            color: #dc3545 !important;
+            display: block !important;
             list-style: none;
             padding: 0;
             margin-top: 15px;
@@ -84,48 +134,59 @@
             text-align: center;
             margin-bottom: 15px;
         }
-        /* --- FIM DOS ESTILOS DE ERRO --- */
-
-        /* Garantindo que mensagens de help_text não apareçam */
+        
         .helptext {
-            display: none !important; /* Esconde qualquer help_text */
+            display: none !important;
         }
+        
         .register-container button {
-            background-color: #007bff; /* Azul vibrante para o botão */
+            background-color: #007bff;
             color: white;
             padding: 14px 25px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 1.1em;
             width: 100%;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
         }
+        
         .register-container button:hover {
             background-color: #0056b3;
+            transform: translateY(-2px);
         }
+        
         .login-link {
             margin-top: 20px;
             font-size: 0.9em;
+            color: #555;
         }
+        
         .login-link a {
             color: #007bff;
             text-decoration: none;
             font-weight: bold;
+            transition: color 0.3s;
         }
+        
         .login-link a:hover {
-                text-decoration: underline;
+            color: #0056b3;
         }
+
     </style>
 {% endblock %}
 
 {% block content %}
+<div class="light-effect"></div>
+<div class="light-effect"></div>
+
 <div class="register-container">
+    <div class="header-luxottica">LUXOTTICA</div>
     <h2>Registe-se</h2>
     <form method="post">
         {% csrf_token %}
 
-        {# Renderiza o campo 'Número de Telefone' (que é o 'username' no form) #}
         <div class="form-group">
             <label for="{{ form.username.id_for_label }}">Número de Telefone:</label>
             {{ form.username }}
@@ -138,7 +199,6 @@
             {% endif %}
         </div>
 
-        {# Renderiza o campo 'Senha' - Agora um único campo #}
         <div class="form-group">
             <label for="{{ form.password.id_for_label }}">Senha:</label>
             {{ form.password }}
@@ -151,9 +211,6 @@
             {% endif %}
         </div>
 
-        {# O campo 'Confirmação da Senha' FOI REMOVIDO AQUI INTENCIONALMENTE! #}
-
-        {# Renderiza o campo 'Código de Convite (Opcional)' #}
         <div class="form-group">
             <label for="{{ form.invited_by_code.id_for_label }}">Código de Convite (Opcional):</label>
             {{ form.invited_by_code }}
@@ -166,7 +223,6 @@
             {% endif %}
         </div>
 
-        {# Se houver erros não específicos de campo (e.g., erros globais do form), eles serão exibidos aqui #}
         {% if form.non_field_errors %}
             <ul class="errorlist">
                 {% for error in form.non_field_errors %}
@@ -184,5 +240,18 @@
 {% endblock %}
 
 {% block extra_body %}
-    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const url = window.location.href;
+            const urlParams = new URLSearchParams(new URL(url).search);
+            const inviteCode = urlParams.get('invite_code');
+
+            // Encontra o campo de input usando o 'id' gerado pelo Django
+            const inviteCodeField = document.getElementById('id_invited_by_code');
+
+            if (inviteCode && inviteCodeField) {
+                inviteCodeField.value = inviteCode;
+            }
+        });
+    </script>
 {% endblock %}

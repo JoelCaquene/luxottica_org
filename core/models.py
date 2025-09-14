@@ -10,6 +10,7 @@ import re
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db import transaction
 
 # CustomUser Manager para adicionar métodos personalizados e sobrescrever create_user
 class CustomUserManager(BaseUserManager):
@@ -99,9 +100,30 @@ class CustomUser(AbstractUser):
         verbose_name_plural = "Usuários"
         
     def save(self, *args, **kwargs):
-        if not self.my_invitation_code:
+        is_new_user = self._state.adding
+        
+        if is_new_user and not self.my_invitation_code:
             self.my_invitation_code = CustomUser.objects.generate_unique_invitation_code()
+
         super().save(*args, **kwargs)
+
+        # Lógica de subsídio de convite
+        if is_new_user and self.invited_by_code:
+            try:
+                # Encontra o usuário que convidou
+                referrer = CustomUser.objects.get(my_invitation_code=self.invited_by_code)
+
+                # Adiciona 100 Kz ao saldo do novo usuário (convidado)
+                self.balance += Decimal('100.00')
+                self.save(update_fields=['balance'])
+                
+                # Adiciona 100 Kz ao saldo do usuário que convidou
+                referrer.balance += Decimal('100.00')
+                referrer.save(update_fields=['balance'])
+
+            except CustomUser.DoesNotExist:
+                # Caso o código de convite não seja válido, a lógica ignora.
+                pass
 
 # NOVO MODELO: UserProfile para dados do perfil e banco principal
 class UserProfile(models.Model):
@@ -265,7 +287,6 @@ class LuckyWheelPrize(models.Model):
 
     class Meta:
         verbose_name = "Prêmio da Roda da Sorte"
-        # CORREÇÃO AQUI: 'verbose_plural_name' foi alterado para 'verbose_name_plural'
         verbose_name_plural = "Prêmios da Roda da Sorte"
         ordering = ['-value']
 
@@ -281,6 +302,6 @@ class LuckyWheelSpin(models.Model):
 
     class Meta:
         verbose_name = "Giro da Roda da Sorte"
-        # CORREÇÃO AQUI: 'verbose_plural_name' foi alterado para 'verbose_name_plural'
         verbose_name_plural = "Giros da Roda da Sorte"
         ordering = ['-spin_time']
+        

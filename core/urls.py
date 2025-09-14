@@ -30,7 +30,7 @@ urlpatterns = [
     path('tasks/', views.tasks_view, name='tasks'),
     
     # Rota para Níveis de Investimento (CORRIGIDO)
-    path('investment_levels/', views.investment_levels_view, name='investment_levels'),
+    path('investment_levels/', views.products_view, name='investment_levels'),
     
     # Rotas de Equipa (Convites)
     path('team/', views.team_view, name='team'),

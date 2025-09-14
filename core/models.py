@@ -217,7 +217,9 @@ def update_user_balance_on_deposit_approval(sender, instance, created, **kwargs)
                             
                     except CustomUser.DoesNotExist:
                         print(f"Usuário com código de indicação {user.invited_by_code} não encontrado.")
-                        pass # Ignora se o código de convite for inválido
+        except sender.DoesNotExist:
+            # Caso o objeto anterior não seja encontrado (pode acontecer), não faz nada.
+            pass
 
 # Modelo para as contas bancárias do usuário (para retirada)
 class UserBankAccount(models.Model):

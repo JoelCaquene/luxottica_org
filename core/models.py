@@ -105,25 +105,10 @@ class CustomUser(AbstractUser):
         if is_new_user and not self.my_invitation_code:
             self.my_invitation_code = CustomUser.objects.generate_unique_invitation_code()
 
+        # A lógica de subsídio de convite foi removida daqui
+        # e movida para um signal do modelo de Depósito para ser mais seguro.
+
         super().save(*args, **kwargs)
-
-        # Lógica de subsídio de convite
-        if is_new_user and self.invited_by_code:
-            try:
-                # Encontra o usuário que convidou
-                referrer = CustomUser.objects.get(my_invitation_code=self.invited_by_code)
-
-                # Adiciona 100 Kz ao saldo do novo usuário (convidado)
-                self.balance += Decimal('100.00')
-                self.save(update_fields=['balance'])
-                
-                # Adiciona 100 Kz ao saldo do usuário que convidou
-                referrer.balance += Decimal('100.00')
-                referrer.save(update_fields=['balance'])
-
-            except CustomUser.DoesNotExist:
-                # Caso o código de convite não seja válido, a lógica ignora.
-                pass
 
 # NOVO MODELO: UserProfile para dados do perfil e banco principal
 class UserProfile(models.Model):
@@ -201,6 +186,38 @@ class Deposit(models.Model):
         verbose_name = "Depósito"
         verbose_name_plural = "Depósitos"
         ordering = ['-timestamp']
+
+# --- NOVO SIGNAL PARA PROCESSAR A LÓGICA DE RECOMPENSA APÓS APROVAÇÃO DO DEPÓSITO ---
+@receiver(post_save, sender=Deposit)
+def update_user_balance_on_deposit_approval(sender, instance, created, **kwargs):
+    # Verifica se o depósito foi aprovado e não é um novo objeto
+    if instance.status == 'Approved' and not created:
+        # Busca o estado anterior do objeto no banco de dados para evitar reprocessamento
+        try:
+            old_instance = sender.objects.get(pk=instance.pk)
+            # Apenas processa se o status mudou de 'Pending' para 'Approved'
+            if old_instance.status == 'Pending' and instance.status == 'Approved':
+                # Adiciona o valor do depósito ao saldo principal do usuário
+                user = instance.user
+                user.balance += instance.amount
+                user.save(update_fields=['balance'])
+                
+                # Lógica de recompensa por indicação (15% sobre o valor do depósito)
+                if user.invited_by_code:
+                    try:
+                        referrer = CustomUser.objects.get(my_invitation_code=user.invited_by_code)
+                        referral_bonus = instance.amount * Decimal('0.15') # 15% do valor depositado
+                        
+                        # Usa uma transação atômica para garantir que a atualização de saldo seja segura
+                        with transaction.atomic():
+                            referrer.balance += referral_bonus
+                            referrer.referral_income += referral_bonus
+                            referrer.save(update_fields=['balance', 'referral_income'])
+                            print(f"Bônus de {referral_bonus} Kz adicionado a {referrer.username} pela indicação de {user.username}.")
+                            
+                    except CustomUser.DoesNotExist:
+                        print(f"Usuário com código de indicação {user.invited_by_code} não encontrado.")
+                        pass # Ignora se o código de convite for inválido
 
 # Modelo para as contas bancárias do usuário (para retirada)
 class UserBankAccount(models.Model):

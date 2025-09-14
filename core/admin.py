@@ -78,24 +78,6 @@ class DepositAdmin(admin.ModelAdmin):
     # Ações personalizadas
     actions = ['approve_deposits', 'reject_deposits']
 
-    def handle_deposit_approval_logic(self, deposit):
-        """Função para gerenciar o pagamento da comissão de convite."""
-        if deposit.user.invited_by_code:
-            try:
-                # Encontra o usuário que convidou
-                referrer_user = CustomUser.objects.get(my_invitation_code=deposit.user.invited_by_code)
-                
-                # O bônus é de 15% sobre o valor do depósito
-                referral_bonus = deposit.amount * 0.15
-                
-                # Adiciona o bônus ao saldo do usuário que convidou
-                referrer_user.referral_income += referral_bonus
-                referrer_user.balance += referral_bonus
-                referrer_user.save()
-            except CustomUser.DoesNotExist:
-                # Se o usuário que convidou não for encontrado, apenas continua sem dar o bônus
-                pass
-
     @admin.action(description='Marcar depósitos selecionados como Aprovado')
     def approve_deposits(self, request, queryset):
         with transaction.atomic():
@@ -105,9 +87,6 @@ class DepositAdmin(admin.ModelAdmin):
                     deposit.user.balance += deposit.amount
                     deposit.user.save()
                     deposit.save()
-                    
-                    # Chama a nova função para processar a comissão de convite
-                    self.handle_deposit_approval_logic(deposit)
                     
         self.message_user(request, "Depósitos aprovados e saldo atualizado com sucesso.")
 

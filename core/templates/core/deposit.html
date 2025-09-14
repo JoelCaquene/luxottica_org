@@ -1,0 +1,391 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXOTTICA_ORG - Depósito</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #0d47a1; /* Azul escuro principal */
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-image: url("{% static 'img/background_deposit.jpg' %}"); /* Imagem de fundo opcional para Depósito */
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5); /* Overlay escuro para contraste */
+            z-index: 0;
+        }
+        .container {
+            flex-grow: 1;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 25px;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 15px 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+        }
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+            width: 100%;
+            text-align: center;
+        }
+        .messages li {
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .messages .success { background-color: #28a745; }
+        .messages .error { background-color: #dc3545; }
+        .messages .info { background-color: #17a2b8; }
+
+        .bank-selection, .deposit-form-section {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .bank-selection h2, .deposit-form-section h2 {
+            text-align: center;
+            color: #81d4fa;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .bank-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .bank-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 120px; /* Largura fixa para os botões do banco */
+        }
+
+        .bank-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .bank-item.selected {
+            border-color: #81d4fa; /* Cor de destaque para o banco selecionado */
+            background-color: rgba(129, 212, 250, 0.3);
+            box-shadow: 0 0 15px rgba(129, 212, 250, 0.6);
+        }
+
+        .bank-item span {
+            display: block;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #fff;
+        }
+
+        .bank-details {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none; /* Escondido por padrão */
+            flex-direction: column;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .bank-details p {
+            margin: 0;
+            font-size: 1em;
+        }
+
+        .copy-button {
+            background-color: #2196f3; /* Azul mais forte para o botão copiar */
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+            margin-left: 10px; /* Espaçamento do IBAN */
+        }
+        .copy-button:hover {
+            background-color: #1976d2;
+        }
+        .copy-button i {
+            margin-right: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #e0f2f7;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="file"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 1em;
+        }
+        /* Estiliza o input file de forma mais amigável */
+        .form-group input[type="file"] {
+            padding: 0;
+            border: none;
+            background: none;
+            color: #fff;
+        }
+        .form-group input[type="file"]::-webkit-file-upload-button {
+            visibility: hidden;
+        }
+        .form-group input[type="file"]::before {
+            content: 'Escolher Arquivo';
+            display: inline-block;
+            background: #2196f3;
+            color: white;
+            border: 1px solid #1976d2;
+            border-radius: 5px;
+            padding: 8px 12px;
+            outline: none;
+            white-space: nowrap;
+            -webkit-user-select: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 10pt;
+            margin-right: 10px;
+        }
+        .form-group input[type="file"]:hover::before {
+            background: #1976d2;
+        }
+        .form-group input[type="file"]:active::before {
+            background: #1976d2;
+        }
+        .form-group .helptext {
+            font-size: 0.9em;
+            color: #bbdefb;
+            margin-top: 5px;
+        }
+
+        .submit-button {
+            background-color: #4CAF50; /* Verde para o botão de submissão */
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+
+        .back-button {
+            display: block;
+            width: fit-content;
+            margin: 20px auto;
+            background-color: #f44336; /* Vermelho para o botão voltar */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        .back-button:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="header">
+            <h1>REALIZAR DEPÓSITO</h1>
+        </div>
+
+        <div class="bank-selection">
+            <h2>1. Selecione o Banco de Destino</h2>
+            {% if banks %}
+                <div class="bank-list">
+                    {% for bank in banks %}
+                        <div class="bank-item" data-id="{{ bank.id }}" data-account-name="{{ bank.account_name }}" data-iban="{{ bank.iban }}">
+                            <span>{{ bank.name }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p style="text-align: center; color: #ffeb3b;">Nenhum banco ativo disponível para depósito.</p>
+            {% endif %}
+
+            <div class="bank-details" id="bank-details-display">
+                <p>Nome da Conta: <strong id="selected-account-name"></strong></p>
+                <p>IBAN: <strong id="selected-iban"></strong> <button class="copy-button" onclick="copyIban()"><i class="far fa-copy"></i> Copiar</button></p>
+            </div>
+        </div>
+
+        <div class="deposit-form-section">
+            <h2>2. Preencha os Dados do Depósito</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                {# Campo oculto para enviar o ID do banco selecionado #}
+                <input type="hidden" name="bank" id="selected-bank-id-input">
+
+                <div class="form-group">
+                    <label for="{{ form.depositor_name.id_for_label }}">{{ form.depositor_name.label }}</label>
+                    <input type="text" name="{{ form.depositor_name.name }}" id="{{ form.depositor_name.id_for_label }}" placeholder="{{ form.depositor_name.field.widget.attrs.placeholder }}" required>
+                    {% if form.depositor_name.help_text %}
+                        <small class="helptext">{{ form.depositor_name.help_text }}</small>
+                    {% endif %}
+                    {% if form.depositor_name.errors %}
+                        {% for error in form.depositor_name.errors %}
+                            <p style="color: #dc3545; font-size: 0.9em; margin-top: 5px;">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.amount.id_for_label }}">{{ form.amount.label }}</label>
+                    <input type="number" name="{{ form.amount.name }}" id="{{ form.amount.id_for_label }}" placeholder="{{ form.amount.field.widget.attrs.placeholder }}" min="{{ form.amount.field.widget.attrs.min }}" step="{{ form.amount.field.widget.attrs.step }}" required>
+                    {% if form.amount.errors %}
+                        {% for error in form.amount.errors %}
+                            <p style="color: #dc3545; font-size: 0.9em; margin-top: 5px;">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.proof_image.id_for_label }}">{{ form.proof_image.label }}</label>
+                    <input type="file" name="{{ form.proof_image.name }}" id="{{ form.proof_image.id_for_label }}" accept="{{ form.proof_image.field.widget.attrs.accept }}" required>
+                    {% if form.proof_image.errors %}
+                        {% for error in form.proof_image.errors %}
+                            <p style="color: #dc3545; font-size: 0.9em; margin-top: 5px;">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <button type="submit" class="submit-button">Enviar Pedido de Depósito</button>
+            </form>
+        </div>
+    </div>
+
+    <a href="{% url 'home' %}" class="back-button">Voltar ao Início</a>
+
+    <script>
+        const bankItems = document.querySelectorAll('.bank-item');
+        const bankDetailsDisplay = document.getElementById('bank-details-display');
+        const selectedAccountName = document.getElementById('selected-account-name');
+        const selectedIban = document.getElementById('selected-iban');
+        const selectedBankIdInput = document.getElementById('selected-bank-id-input');
+        let currentSelectedBankId = null;
+
+        bankItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Remove a seleção de todos os bancos
+                bankItems.forEach(b => b.classList.remove('selected'));
+                // Adiciona a seleção ao item clicado
+                item.classList.add('selected');
+
+                // Obtém os dados do banco selecionado
+                currentSelectedBankId = item.dataset.id;
+                const accountName = item.dataset.accountName;
+                const iban = item.dataset.iban;
+
+                // Preenche os detalhes na área de exibição
+                selectedAccountName.textContent = accountName;
+                selectedIban.textContent = iban;
+                bankDetailsDisplay.style.display = 'flex'; // Mostra os detalhes
+
+                // Atualiza o campo oculto do formulário
+                selectedBankIdInput.value = currentSelectedBankId;
+            });
+        });
+
+        function copyIban() {
+            const ibanText = selectedIban.textContent;
+            navigator.clipboard.writeText(ibanText).then(() => {
+                alert('IBAN copiado para a área de transferência!');
+            }).catch(err => {
+                console.error('Erro ao copiar IBAN:', err);
+                alert('Não foi possível copiar o IBAN. Por favor, copie manualmente.');
+            });
+        }
+
+        // Validação básica para garantir que um banco foi selecionado antes de enviar o formulário
+        document.querySelector('form').addEventListener('submit', function(event) {
+            if (!selectedBankIdInput.value) {
+                alert('Por favor, selecione um banco antes de enviar o depósito.');
+                event.preventDefault(); // Impede o envio do formulário
+            }
+        });
+    </script>
+</body>
+</html>

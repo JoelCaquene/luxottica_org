@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Entrar - LUXOTTICA_ORG{% endblock %}
+
+{% block extra_head %}
+    <style>
+        body {
+            background-color: #0d1a2f; /* Azul escuro */
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-container {
+            background-color: #1a2c42; /* Azul um pouco mais claro */
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            color: #4CAF50; /* Verde vibrante */
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #bbb;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 12px 10px;
+            border: 1px solid #334e68;
+            border-radius: 8px;
+            background-color: #0f1c2e; /* Fundo do input */
+            color: #fff;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="password"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        button[type="submit"] {
+            background-color: #007bff; /* Azul padrão para botão */
+            color: white;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3; /* Azul mais escuro ao passar o mouse */
+            transform: translateY(-2px);
+        }
+
+        .link-text {
+            margin-top: 20px;
+            font-size: 0.95em;
+            color: #bbb;
+        }
+
+        .link-text a {
+            color: #4CAF50; /* Verde vibrante para links */
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .link-text a:hover {
+            color: #388E3C; /* Verde mais escuro ao passar o mouse */
+            text-decoration: underline;
+        }
+
+        /* Mensagens do Django */
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .messages li {
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            opacity: 0.9;
+            animation: fadeOut 8s forwards; /* Mensagens somem após 8s */
+        }
+        .messages .success {
+            background-color: #28a745; /* Verde */
+            color: white;
+        }
+        .messages .error {
+            background-color: #dc3545; /* Vermelho */
+            color: white;
+        }
+        .messages .info {
+            background-color: #17a2b8; /* Azul claro */
+            color: white;
+        }
+        .messages .warning {
+            background-color: #ffc107; /* Amarelo */
+            color: #333;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 0.9; }
+            80% { opacity: 0.9; }
+            100% { opacity: 0; display: none; }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <h1>Fazer Login</h1>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %} {# MUITO IMPORTANTE: Garante a segurança do formulário #}
+
+        <div class="form-group">
+            <label for="{{ form.username.id_for_label }}">Número de Telefone:</label>
+            {{ form.username }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.password.id_for_label }}">Senha:</label>
+            {{ form.password }}
+        </div>
+
+        <button type="submit">Entrar</button>
+    </form>
+
+    <p class="link-text">Não tem uma conta? <a href="{% url 'register' %}">Cadastre-se aqui</a></p>
+</div>
+{% endblock %}

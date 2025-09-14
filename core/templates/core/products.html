@@ -1,0 +1,312 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXOTTICA_ORG - Produtos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #0d47a1; /* Azul escuro principal */
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-image: url("{% static 'img/background_products.jpg' %}"); /* Imagem de fundo opcional para a página de produtos */
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5); /* Overlay escuro para contraste */
+            z-index: 0;
+        }
+        .container {
+            flex-grow: 1;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+        }
+        .header {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 30px;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 15px 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .products-nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            width: 100%;
+        }
+        .products-nav-button {
+            background-color: #4CAF50; /* Verde */
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            text-transform: uppercase;
+            flex: 1;
+            max-width: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .products-nav-button:hover {
+            background-color: #45a049;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+        .products-nav-button i {
+            margin-right: 10px;
+        }
+
+        .investment-levels-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .investment-level-card {
+            background-color: rgba(255, 255, 255, 0.1); /* Fundo semi-transparente */
+            padding: 25px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: left;
+            position: relative;
+            overflow: hidden; /* Para garantir que o pseudo-elemento não vaze */
+        }
+        /* Efeito de brilho na borda */
+        .investment-level-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg at 50% 50%, #81d4fa, transparent 50%, #81d4fa);
+            animation: rotateBorder 6s linear infinite;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        @keyframes rotateBorder {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .investment-level-card h2 {
+            font-size: 2em;
+            color: #81d4fa; /* Azul claro */
+            margin-bottom: 15px;
+            text-shadow: 0 0 8px rgba(129, 212, 250, 0.7);
+            text-align: center;
+        }
+        .investment-level-card p {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            color: #e0f2f7;
+            line-height: 1.4;
+        }
+        .investment-level-card strong {
+            color: #FFEB3B; /* Amarelo para valores */
+            font-weight: bold;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            height: 20px;
+            margin-top: 15px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%; /* Será preenchido por JS ou dinamicamente por Django/CSS */
+            background-color: #28a745; /* Verde */
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            line-height: 20px;
+            font-size: 0.9em;
+            transition: width 0.5s ease-in-out;
+            box-shadow: 0 0 8px rgba(40, 167, 69, 0.7);
+        }
+
+        .countdown-info {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #FFEB3B;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .back-button {
+            display: block;
+            width: fit-content;
+            margin: 40px auto 20px auto;
+            background-color: #f44336;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .back-button:hover {
+            background-color: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        /* Media Queries para adaptação */
+        @media (max-width: 600px) {
+            .products-nav {
+                flex-direction: column;
+            }
+            .products-nav-button {
+                max-width: 100%;
+            }
+            .header h1 {
+                font-size: 2em;
+            }
+            .investment-level-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Produtos</h1>
+        </div>
+
+        <nav class="products-nav">
+            <a href="{% url 'tasks' %}" class="products-nav-button">
+                <i class="fas fa-tasks"></i> Tarefas
+            </a>
+            <a href="{% url 'investment_levels' %}" class="products-nav-button">
+                <i class="fas fa-chart-line"></i> Níveis de Investimento
+            </a>
+        </nav>
+
+        <section class="investment-levels-section">
+            {% if investment_levels %}
+                {% for level in investment_levels %}
+                <div class="investment-level-card">
+                    <h2>{{ level.name }}</h2> {# Ex: VIP 1 #}
+                    <p>Valor investido: <strong>Kz {{ level.invested_value|floatformat:0 }}</strong></p>
+                    <p>Renda diária: <strong>Kz {{ level.daily_income|floatformat:0 }}</strong></p>
+                    <p>Ciclo: <strong>{{ level.cycle_days }} dias</strong></p>
+                    
+                    {% if level.is_active_task %}
+                    <div class="countdown-info" id="countdown-{{ forloop.counter }}">
+                        OD: <span class="hours">00</span>H : <span class="minutes">00</span>M : <span class="seconds">00</span>S
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: {{ level.progress_percentage|default:0 }}%;">{{ level.progress_percentage|default:0 }}%</div>
+                    </div>
+                    <p class="rental-date">Data de Ativação: <strong>{{ level.rental_date|date:"M d Y H:i" }}</strong></p>
+                    {% else %}
+                    <p class="rental-date">Status: <strong>Disponível para Ativação</strong></p>
+                    {% endif %}
+                    
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Nenhum nível de investimento disponível no momento.</p>
+            {% endif %}
+        </section>
+    </div>
+
+    <a href="{% url 'home' %}" class="back-button">Voltar ao Início</a>
+
+    <script>
+        // Este script é um placeholder. A lógica de contagem regressiva e atualização da barra de progresso
+        // para tarefas ativas deve ser implementada no backend e talvez complementada com AJAX e JS para real-time
+        // updates mais robustos, especialmente se os dados forem complexos ou precisarem de precisão.
+
+        // Exemplo básico de um timer de contagem regressiva para demonstração
+        // Em um ambiente real, você obterá o tempo restante do backend.
+        document.querySelectorAll('.countdown-info').forEach(countdownElement => {
+            // Suponha que você receba o 'end_time' do backend para cada tarefa ativa
+            // Por simplicidade, aqui vamos simular um tempo inicial
+            let initialHours = 23; 
+            let initialMinutes = 58;
+            let initialSeconds = 53;
+
+            function updateCountdown() {
+                if (initialHours <= 0 && initialMinutes <= 0 && initialSeconds <= 0) {
+                    countdownElement.textContent = "Tarefa Concluída!";
+                    // Aqui você faria uma chamada ao backend para registrar a conclusão e talvez iniciar um novo ciclo
+                    return;
+                }
+
+                initialSeconds--;
+                if (initialSeconds < 0) {
+                    initialSeconds = 59;
+                    initialMinutes--;
+                    if (initialMinutes < 0) {
+                        initialMinutes = 59;
+                        initialHours--;
+                    }
+                }
+
+                const formatTime = (unit) => String(unit).padStart(2, '0');
+                countdownElement.querySelector('.hours').textContent = formatTime(initialHours);
+                countdownElement.querySelector('.minutes').textContent = formatTime(initialMinutes);
+                countdownElement.querySelector('.seconds').textContent = formatTime(initialSeconds);
+            }
+
+            // Apenas para demonstração. Em produção, este timer precisa ser sincronizado com o backend.
+            // setInterval(updateCountdown, 1000); 
+            // updateCountdown(); // Chama uma vez para exibir o estado inicial
+        });
+    </script>
+</body>
+</html>

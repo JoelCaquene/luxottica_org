@@ -1,0 +1,284 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXOTTICA_ORG - Renda</title>
+    <!-- Links para fontes e ícones externos -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #0d47a1; /* Azul escuro principal */
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            /* APONTANDO PARA A SUA IMAGEM DE FUNDO NA PASTA STATIC/IMG */
+            background-image: url("{% static 'img/background_income.jpg' %}"); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Opcional: para que o fundo não role com o conteúdo */
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5); /* Overlay escuro para contraste */
+            z-index: 0;
+        }
+        .container {
+            flex-grow: 1;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 25px;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 15px 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+        }
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+            width: 100%;
+            text-align: center;
+        }
+        .messages li {
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .messages .success { background-color: #28a745; }
+        .messages .error { background-color: #dc3545; }
+        .messages .info { background-color: #17a2b8; }
+
+        .summary-section, .history-section {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            width: 100%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .summary-section h2, .history-section h2 {
+            text-align: center;
+            color: #81d4fa;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 2px solid rgba(129, 212, 250, 0.5);
+            padding-bottom: 10px;
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 1.1em;
+        }
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+        .summary-item .label {
+            color: #e0f2f7;
+            font-weight: bold;
+        }
+        .summary-item .value {
+            color: #FFC107; /* Amarelo para valores */
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .summary-item.balance .value {
+            color: #4CAF50; /* Verde para saldo */
+            font-size: 1.5em;
+            text-shadow: 0 0 5px rgba(76, 175, 80, 0.7);
+        }
+
+        .history-list {
+            max-height: 400px; /* Limita a altura para scroll */
+            overflow-y: auto;
+            padding-right: 10px; /* Espaço para a scrollbar */
+        }
+        .history-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .history-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .history-list::-webkit-scrollbar-thumb {
+            background: #81d4fa;
+            border-radius: 10px;
+        }
+        .history-list::-webkit-scrollbar-thumb:hover {
+            background: #4fc3f7;
+        }
+
+        .history-item {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .history-item .type {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .history-item.deposit .type { color: #4CAF50; } /* Verde para depósito */
+        .history-item.withdrawal .type { color: #f44336; } /* Vermelho para retirada */
+        .history-item.task .type { color: #2196f3; } /* Azul para tarefa */
+
+        .history-item p {
+            margin: 0;
+            font-size: 0.95em;
+            color: #cfd8dc;
+        }
+        .history-item .date {
+            font-size: 0.85em;
+            color: #bbdefb;
+            text-align: right;
+        }
+
+        .no-history-message {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.1em;
+            color: #bbdefb;
+        }
+
+        .back-button {
+            display: block;
+            width: fit-content;
+            margin: 20px auto;
+            background-color: #f44336;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        .back-button:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="header">
+            <h1>MINHA RENDA</h1>
+        </div>
+
+        <div class="summary-section">
+            <h2>Resumo de Ganhos</h2>
+            <div class="summary-item balance">
+                <span class="label">Saldo Atual:</span>
+                <span class="value">Kz {{ current_balance|floatformat:2 }}</span>
+            </div>
+            <div class="summary-item">
+                <span class="label">Total de Ganhos por Tarefas:</span>
+                <span class="value">Kz {{ total_task_earnings|floatformat:2 }}</span>
+            </div>
+            <div class="summary-item">
+                <span class="label">Total de Ganhos por Convite:</span>
+                <span class="value">Kz {{ total_referral_earnings|floatformat:2 }}</span>
+            </div>
+        </div>
+
+        <div class="history-section">
+            <h2>Histórico de Transações Recentes</h2>
+            <div class="history-list">
+                {% if recent_deposits or recent_withdrawals or completed_tasks %}
+                    
+                    <h3>Depósitos Aprovados</h3>
+                    {% if recent_deposits %}
+                        {% for deposit in recent_deposits %}
+                            <div class="history-item deposit">
+                                <span class="type"><i class="fas fa-arrow-alt-circle-up"></i> Depósito Aprovado</span>
+                                <p>Valor: <strong style="color: #A5D6A7;">Kz {{ deposit.amount|floatformat:2 }}</strong></p>
+                                <p>Banco: {{ deposit.bank.name }}</p>
+                                <span class="date">{{ deposit.timestamp|date:"d M, H:i" }}</span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-history-message">Nenhum depósito aprovado recente.</p>
+                    {% endif %}
+
+                    <h3>Retiradas Aprovadas</h3>
+                    {% if recent_withdrawals %}
+                        {% for withdrawal in recent_withdrawals %}
+                            <div class="history-item withdrawal">
+                                <span class="type"><i class="fas fa-arrow-alt-circle-down"></i> Retirada Aprovada</span>
+                                <p>Valor Solicitado: <strong style="color: #EF9A9A;">Kz {{ withdrawal.amount|floatformat:2 }}</strong></p>
+                                <p>Valor Recebido: <strong style="color: #EF9A9A;">Kz {{ withdrawal.amount_received|floatformat:2 }}</strong> (Taxa: {{ withdrawal.tax_percentage|floatformat:0 }}%)</p> {# Added floatformat:0 for percentage #}
+                                <span class="date">{{ withdrawal.timestamp|date:"d M, H:i" }}</span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-history-message">Nenhuma retirada aprovada recente.</p>
+                    {% endif %}
+
+                    <h3>Tarefas Concluídas</h3>
+                    {% if completed_tasks %}
+                        {% for task in completed_tasks %}
+                            <div class="history-item task">
+                                <span class="type"><i class="fas fa-check-circle"></i> Tarefa Concluída</span>
+                                <p>Nível: {{ task.product.level_name }}</p> {# CORREÇÃO: Usar task.product #}
+                                <p>Ganho: <strong style="color: #90CAF9;">Kz {{ task.product.daily_income|floatformat:2 }}</strong></p> {# CORREÇÃO: Usar task.product #}
+                                <span class="date">{{ task.completion_date|date:"d M, H:i" }}</span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-history-message">Nenhuma tarefa concluída recente.</p>
+                    {% endif %}
+
+                {% else %}
+                    <p class="no-history-message">Nenhum histórico de transações disponível ainda.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <a href="{% url 'home' %}" class="back-button">Voltar ao Início</a>
+</body>
+</html>

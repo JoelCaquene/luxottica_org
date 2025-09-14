@@ -1,0 +1,36 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LUXOTTICA_ORG Platform{% endblock %}</title>
+    
+    {# CORRIGIDO: O nome do arquivo CSS de 'global.css' para 'style.css' #}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"> 
+    
+    {% block extra_head %}{% endblock %} {# Este bloco é para CSS/meta adicionais de páginas específicas #}
+</head>
+<body>
+    <div class="main-content">
+        {% block content %}{% endblock %}
+    </div>
+
+    {# Agora o bloco extra_body vem ANTES do seu script principal. #}
+    {# Isto garante que scripts específicos de uma página (colocados em extra_body) #}
+    {# sejam carregados antes do script global, se o script global depender deles. #}
+    {# Ou o ideal é que main.js seja carregado DEPOIS dos scripts do extra_body. #}
+    {# A ordem mais comum é: scripts da página -> scripts globais. #}
+
+    {# Mantendo a ordem de carregamento do seu main.js explicitamente aqui #}
+    {# e colocando o extra_body depois, para que scripts globais sejam os últimos. #}
+    {# Se main.js for o script principal que inicializa coisas na página, ele deve vir antes. #}
+    {# Vamos seguir a ordem padrão: scripts globais PRIMEIRO, depois scripts específicos do bloco. #}
+
+    {# CORRIGIDO: O nome do arquivo JS de 'global.js' para 'main.js' #}
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    {% block extra_body %}{% endblock %} {# Este bloco é para JS adicional de páginas específicas #}
+</body>
+</html>

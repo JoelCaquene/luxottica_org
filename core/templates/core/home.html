@@ -1,0 +1,288 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXOTTICA_ORG - Início</title>
+    {# CORRIGIDO: Link para o CSS. Era 'home_style.css', agora é 'style.css' #}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #0d47a1; /* Azul escuro principal */
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-image: url("{% static 'img/background_menu.jpg' %}"); /* Imagem de fundo opcional */
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4); /* Overlay escuro para contraste */
+            z-index: 0;
+        }
+
+        .container {
+            flex-grow: 1;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+            max-width: 600px; /* Limita a largura para mobile-first */
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 25px;
+            background-color: rgba(0, 0, 0, 0.3); /* Fundo semi-transparente para o cabeçalho */
+            padding: 15px 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            color: #ffffff; /* Branco para o título */
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.7); /* Efeito de brilho */
+        }
+
+        .user-info {
+            background-color: rgba(255, 255, 255, 0.1); /* Fundo translúcido para info do usuário */
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            text-align: left;
+        }
+        .user-info p {
+            margin: 8px 0;
+            font-size: 1.1em;
+            color: #e0f2f7;
+        }
+        .user-info strong {
+            color: #81d4fa; /* Cor de destaque para valores */
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 colunas */
+            gap: 15px;
+            width: 100%;
+            max-width: 400px; /* Limita a largura da grade */
+            margin-bottom: 30px;
+        }
+
+        .menu-button {
+            background-color: rgba(255, 255, 255, 0.15); /* Fundo para os botões */
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px 10px;
+            text-align: center;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            min-height: 100px; /* Altura mínima para botões */
+        }
+
+        .menu-button:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-button .icon {
+            font-size: 2.5em; /* Tamanho dos ícones Font Awesome */
+            margin-bottom: 8px;
+            color: #81d4fa; /* Cor dos ícones */
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Brilho nos ícones */
+        }
+        /* Estilos para imagens customizadas, se preferir */
+        .menu-button img {
+            width: 50px; /* Tamanho da imagem do ícone */
+            height: 50px;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); /* Brilho na imagem */
+        }
+
+        .menu-button span {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .footer-nav {
+            background-color: #0d47a1; /* Azul escuro para o rodapé */
+            width: 100%;
+            padding: 10px 0;
+            position: sticky;
+            bottom: 0;
+            left: 0;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-around;
+            z-index: 1;
+        }
+
+        .footer-nav a {
+            color: #81d4fa; /* Cor dos ícones de navegação */
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.8em;
+            padding: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-nav a:hover {
+            color: #fff;
+        }
+
+        .footer-nav .icon {
+            font-size: 1.8em;
+            margin-bottom: 3px;
+        }
+
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+            width: 100%;
+            text-align: center;
+        }
+        .messages li {
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .messages .success {
+            background-color: #28a745; /* Verde para sucesso */
+        }
+        .messages .error {
+            background-color: #dc3545; /* Vermelho para erro */
+        }
+        .messages .info {
+            background-color: #17a2b8; /* Azul claro para info */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="header">
+            <h1>BEM-VINDO(A)!</h1>
+            <div class="user-info">
+                <p>NÚMERO DO USUÁRIO: <strong>{{ user.username }}</strong></p>
+                <p>SALDO DISPONÍVEL: <strong>Kz {{ user.balance|floatformat:2 }}</strong></p>
+                <p>SALDO BÔNUS: <strong>Kz {{ user.bonus_balance|floatformat:2 }}</strong></p>
+                <p>NÍVEL ATUAL: <strong>{% if user.current_product %}{{ user.current_product.level_name }}{% else %}Nenhum{% endif %}</strong></p>
+            </div>
+        </div>
+
+        <div class="menu-grid">
+            <a href="{% url 'deposit' %}" class="menu-button">
+                <i class="fas fa-wallet icon"></i> {# Ícone Font Awesome #}
+                {# Ou use imagem: <img src="{% static 'img/icon_deposit.png' %}" alt="Depósito"> #}
+                <span>Depósito</span>
+            </a>
+
+            <a href="{% url 'withdrawal' %}" class="menu-button">
+                <i class="fas fa-hand-holding-usd icon"></i> {# Ícone Font Awesome #}
+                {# Ou use imagem: <img src="{% static 'img/icon_withdrawal.png' %}" alt="Retirada"> #}
+                <span>Retirada</span>
+            </a>
+
+            <a href="{% url 'support' %}" class="menu-button">
+                <i class="fas fa-headset icon"></i> {# Ícone Font Awesome #}
+                {# Ou use imagem: <img src="{% static 'img/icon_support.png' %}" alt="Suporte"> #}
+                <span>Suporte</span>
+            </a>
+
+            <a href="{% url 'income' %}" class="menu-button">
+                <i class="fas fa-money-bill-wave icon"></i> {# Ícone Font Awesome #}
+                {# Ou use imagem: <img src="{% static 'img/icon_income.png' %}" alt="Renda"> #}
+                <span>Renda</span>
+            </a>
+
+            <a href="{% url 'lucky_wheel' %}" class="menu-button">
+                <i class="fas fa-dice icon"></i> {# Ícone Font Awesome #}
+                {# Ou use imagem: <img src="{% static 'img/icon_luckywheel.png' %}" alt="Roda da Sorte"> #}
+                <span>Roda da Sorte</span>
+            </a>
+
+            <a href="{% url 'products' %}" class="menu-button">
+                <i class="fas fa-box-open icon"></i> {# Ícone Font Awesome #}
+                {# Ou use imagem: <img src="{% static 'img/icon_products.png' %}" alt="Produtos"> #}
+                <span>Produtos</span>
+            </a>
+
+            <a href="{% url 'team' %}" class="menu-button">
+                <i class="fas fa-users icon"></i> {# Ícone Font Awesome #}
+                {# Ou use imagem: <img src="{% static 'img/icon_team.png' %}" alt="Equipa"> #}
+                <span>Equipa</span>
+            </a>
+
+            <a href="{% url 'profile' %}" class="menu-button">
+                <i class="fas fa-user-circle icon"></i> {# Ícone Font Awesome #}
+                {# Ou use imagem: <img src="{% static 'img/icon_profile.png' %}" alt="Perfil"> #}
+                <span>Perfil</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="footer-nav">
+        <a href="{% url 'home' %}">
+            <i class="fas fa-home icon"></i>
+            <span>Início</span>
+        </a>
+        <a href="{% url 'products' %}">
+            <i class="fas fa-box-open icon"></i>
+            <span>Produtos</span>
+        </a>
+        <a href="{% url 'team' %}">
+            <i class="fas fa-users icon"></i>
+            <span>Equipa</span>
+        </a>
+        <a href="{% url 'profile' %}">
+            <i class="fas fa-user-alt icon"></i>
+            <span>Pessoal</span>
+        </a>
+    </div>
+
+    <a href="{% url 'logout' %}" style="color: white; margin-top: 20px; text-decoration: underline; position: relative; z-index: 1;">Sair (Logout)</a>
+</body>
+</html>

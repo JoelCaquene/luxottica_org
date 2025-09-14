@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Adicionar Conta Bancária{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen p-4 bg-gray-900 text-white">
+    <div class="w-full max-w-md bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        
+        <!-- Header Section -->
+        <div class="p-6 bg-cyan-600 text-center rounded-t-lg">
+            <h2 class="text-3xl font-extrabold">Adicionar Conta Bancária</h2>
+        </div>
+
+        <!-- Formulário de Adição de Conta Bancária -->
+        <div class="p-6 space-y-6">
+            <form method="post" action="{% url 'add_bank_account' %}">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class="mb-4">
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-300">
+                            {{ field.label }}
+                        </label>
+                        {{ field|add_class:"mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm text-white" }}
+                        {% for error in field.errors %}
+                            <p class="mt-2 text-sm text-red-400">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                <div class="mt-6">
+                    <button type="submit" name="add_bank_account" class="w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold text-lg rounded-md shadow-lg hover:from-blue-600 hover:to-cyan-600 transform transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500">
+                        Adicionar Conta
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-6 text-center">
+                <a href="{% url 'profile' %}" class="text-gray-400 hover:text-cyan-400 text-sm">Voltar ao Perfil</a>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<!-- Inclusão do Tailwind CSS para estilização -->
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+</style>
+{% endblock %}

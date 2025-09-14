@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tarefas{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen p-4 bg-gray-900 text-white">
+    <div class="w-full max-w-md bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        
+        <!-- Header Section -->
+        <div class="p-6 bg-cyan-600 text-center rounded-t-lg">
+            <h2 class="text-3xl font-extrabold">Minhas Tarefas</h2>
+        </div>
+
+        <!-- Conteúdo Principal da Tarefa -->
+        <div class="p-6 space-y-6">
+            <!-- Usa a variável 'nivel' do contexto -->
+            <h3 class="text-xl font-semibold text-center text-gray-300">Nível Atual: {% if nivel %}{{ nivel }}{% else %}Nenhum{% endif %}</h3>
+            
+            <!-- Lógica para mostrar o card de tarefa se o nível estiver ativo -->
+            {% if active_task %}
+            <!-- Card de Tarefa -->
+            <div class="bg-gray-700 p-6 rounded-lg shadow-inner">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="text-lg font-bold text-yellow-400">Plano {{ nivel }}</h4>
+                    <span class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">Ativo</span>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400">Valor Investido:</span>
+                        <span class="font-semibold text-white">Kz {{ invested_value }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400">Renda Diária:</span>
+                        <span class="font-semibold text-green-400">Kz {{ renda_diaria }}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-400">Tempo Restante:</span>
+                        <span id="countdown" class="font-mono text-xl text-yellow-300"></span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400">Porcentagem:</span>
+                        <span class="font-semibold text-white">{{ percentage|floatformat:2 }}%</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-400">Data de Aluguel:</span>
+                        <span class="font-semibold text-white">{{ rental_date|date:"d M Y, H:i" }}</span>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <!-- Mensagem para quando a tarefa não estiver ativa -->
+            <div class="text-center p-6 bg-gray-700 rounded-lg shadow-inner">
+                <p class="text-gray-400 text-lg">Aguardando aprovação do depósito e atribuição de nível pelo administrador. O contador iniciará após a ativação.</p>
+            </div>
+            {% endif %}
+
+            <!-- Botão de Ver Tarefa -->
+            <div class="mt-8 text-center">
+                <a href="#" class="inline-block w-full py-4 px-6 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold text-lg rounded-full shadow-lg hover:from-blue-600 hover:to-cyan-600 transform transition-transform duration-200 hover:scale-105">
+                    Ver Tarefa
+                </a>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<!-- Inclusão do Tailwind CSS para estilização -->
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+</style>
+{% endblock %}
+
+{% block extra_body %}
+<script>
+    // Usa a variável 'active_task' do contexto para decidir se o contador deve iniciar.
+    // O filtro 'yesno' garante que a string seja "true" ou "false" para o JS.
+    const taskActive = {{ active_task|yesno:'true,false' }};
+
+    // A variável remaining_seconds é passada diretamente do backend.
+    let totalSeconds = {{ remaining_seconds }};
+
+    if (taskActive) {
+        function startCountdown() {
+            const countdownElement = document.getElementById('countdown');
+
+            // Define o texto inicial imediatamente para evitar a exibição vazia
+            if (totalSeconds <= 0) {
+                countdownElement.textContent = '00D: 00H: 00M: 00S';
+                // Recarrega a página se a tarefa já estiver completa
+                window.location.reload(); 
+                return;
+            }
+
+            const interval = setInterval(() => {
+                if (totalSeconds <= 0) {
+                    clearInterval(interval);
+                    countdownElement.textContent = '00D: 00H: 00M: 00S';
+                    // Recarrega a página para atualizar o status da tarefa quando ela termina
+                    window.location.reload(); 
+                    return;
+                }
+
+                const days = Math.floor(totalSeconds / (3600 * 24));
+                const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+
+                const formatTime = (time) => String(time).padStart(2, '0');
+
+                countdownElement.textContent = `${formatTime(days)}D: ${formatTime(hours)}H: ${formatTime(minutes)}M: ${formatTime(seconds)}S`;
+                totalSeconds--;
+            }, 1000);
+        }
+        window.onload = startCountdown;
+    } else {
+        // Se não houver tarefa ativa, garanta que o elemento do contador esteja vazio ou mostre uma mensagem padrão
+        const countdownElement = document.getElementById('countdown');
+        if (countdownElement) {
+            countdownElement.textContent = ''; // Ou 'N/A' ou similar
+        }
+    }
+</script>
+{% endblock %}

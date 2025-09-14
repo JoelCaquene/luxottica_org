@@ -1,0 +1,224 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXOTTICA_ORG - Suporte</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #0d47a1; /* Azul escuro principal */
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-image: url("{% static 'img/background_support.jpg' %}"); /* Imagem de fundo opcional */
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5); /* Overlay escuro para contraste */
+            z-index: 0;
+        }
+        .container {
+            flex-grow: 1;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 25px;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 15px 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+        }
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+            width: 100%;
+            text-align: center;
+        }
+        .messages li {
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .messages .success { background-color: #28a745; }
+        .messages .error { background-color: #dc3545; }
+        .messages .info { background-color: #17a2b8; }
+
+        .content-section {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            width: 100%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .content-section h2 {
+            text-align: center;
+            color: #81d4fa;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 2px solid rgba(129, 212, 250, 0.5);
+            padding-bottom: 10px;
+        }
+        .content-section h3 {
+            color: #e0f2f7;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        .content-section p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #cfd8dc;
+        }
+        .content-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .content-section ul li {
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            color: #bbdefb;
+        }
+        .contact-link {
+            display: inline-block;
+            background-color: #4CAF50; /* Verde para WhatsApp */
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            margin-right: 15px;
+            margin-bottom: 10px;
+        }
+        .contact-link.telegram {
+            background-color: #0088cc; /* Azul para Telegram */
+        }
+        .contact-link:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .contact-link i {
+            margin-right: 8px;
+        }
+
+        .no-info-message {
+            text-align: center;
+            padding: 30px;
+            font-size: 1.2em;
+            color: #ffeb3b;
+        }
+
+        .back-button {
+            display: block;
+            width: fit-content;
+            margin: 20px auto;
+            background-color: #f44336;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        .back-button:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="header">
+            <h1>CENTRAL DE SUPORTE</h1>
+        </div>
+
+        {% if support_info %}
+            <div class="content-section">
+                <h2>Contactos</h2>
+                <p>Nossa equipe de suporte está disponível para ajudá-lo(a) com qualquer dúvida ou problema.</p>
+                <p>Você pode nos contatar através dos seguintes canais:</p>
+                <ul>
+                    {% if support_info.whatsapp_number %}
+                        <li>
+                            <a href="https://wa.me/{{ support_info.whatsapp_number }}" target="_blank" class="contact-link">
+                                <i class="fab fa-whatsapp"></i> WhatsApp: {{ support_info.whatsapp_number }}
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if support_info.telegram_username %}
+                        <li>
+                            <a href="https://t.me/{{ support_info.telegram_username }}" target="_blank" class="contact-link telegram">
+                                <i class="fab fa-telegram-plane"></i> Telegram: @{{ support_info.telegram_username }}
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if not support_info.whatsapp_number and not support_info.telegram_username %}
+                        <li>Nenhum contacto de suporte configurado no momento.</li>
+                    {% endif %}
+                </ul>
+
+                {% if support_info.platform_info %}
+                    <h3>Informações da Plataforma</h3>
+                    <p>{{ support_info.platform_info|linebreaksbr }}</p>
+                {% endif %}
+
+                {% if support_info.platform_rules %}
+                    <h3>Regras da Plataforma</h3>
+                    <p>{{ support_info.platform_rules|linebreaksbr }}</p>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="content-section no-info-message">
+                <p>As informações de suporte ainda não foram configuradas pelo administrador.</p>
+                <p>Por favor, tente novamente mais tarde.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <a href="{% url 'home' %}" class="back-button">Voltar ao Início</a>
+</body>
+</html>

@@ -1,0 +1,325 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Minha Equipa{% endblock %}
+
+{% block content %}
+<style>
+    /* Estilos globais para o corpo da página */
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #0d1a33; /* Fundo azul escuro */
+        color: #fff; /* Cor do texto padrão para branco */
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        /* Adiciona a imagem de fundo enviada pelo utilizador */
+        background-image: url("{% static 'img/image_bd13bc.png' %}"); 
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        position: relative;
+    }
+    body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6); /* Overlay escuro mais forte para contraste do texto */
+        z-index: 0;
+    }
+
+    /* Títulos com efeito de brilho e mais destaque */
+    .text-glow {
+        text-shadow: 0 0 15px rgba(0, 191, 255, 0.9), 0 0 30px rgba(0, 191, 255, 0.7), 0 0 45px rgba(0, 191, 255, 0.5); /* Brilho azul mais intenso e camadas */
+        font-weight: 800; /* Mais negrito */
+        letter-spacing: 2px; /* Espaçamento entre letras */
+        color: #e0f7fa; /* Cor base para o texto do título */
+    }
+
+    /* Estilo dos cartões (cards) */
+    .card {
+        background-color: rgba(26, 44, 78, 0.9); /* Azul escuro semi-transparente para os cartões */
+        border-radius: 20px; /* Bordas mais arredondadas */
+        border: 1px solid #00bfff; /* Borda azul brilhante */
+        box-shadow: 0 8px 30px rgba(0, 191, 255, 0.2); /* Sombra mais pronunciada e com brilho azul */
+        margin-bottom: 30px; /* Mais espaçamento entre os cartões */
+        backdrop-filter: blur(5px); /* Efeito de desfoque de fundo */
+    }
+
+    /* Título dentro dos cartões */
+    .card-title {
+        color: #81d4fa; /* Azul claro para o título do cartão */
+        font-weight: bold;
+        text-shadow: 0 0 10px rgba(129, 212, 250, 0.5); /* Brilho para títulos internos */
+        font-size: 1.6em; /* Aumentar tamanho da fonte */
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    /* Campo de input */
+    .form-control {
+        background-color: rgba(42, 62, 94, 0.8); /* Fundo mais escuro e semi-transparente */
+        color: #fff; /* Texto branco no input */
+        border: 1px solid #00e5ff; /* Borda azul clara vibrante */
+        box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.5); /* Sombra interna mais escura */
+        padding: 12px 18px; /* Padding maior */
+        border-radius: 10px; /* Bordas mais arredondadas */
+        font-size: 1.1em;
+    }
+    .form-control:focus {
+        border-color: #00ffff; /* Borda ciano ao focar */
+        box-shadow: 0 0 0 0.25rem rgba(0, 229, 255, 0.5); /* Brilho ao focar */
+        background-color: rgba(58, 78, 110, 0.9); /* Ligeiramente mais claro e menos transparente ao focar */
+    }
+
+    /* Botões */
+    .btn {
+        font-weight: bold;
+        transition: all 0.3s ease;
+        padding: 12px 25px;
+        border-radius: 10px; /* Bordas mais arredondadas para todos os botões */
+        font-size: 1.1em;
+    }
+    .btn-primary {
+        background: linear-gradient(45deg, #007bff, #00e5ff); /* Gradiente azul para primário */
+        border: none;
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.7); /* Brilho azul intenso */
+        color: white; /* Texto branco */
+    }
+    .btn-primary:hover {
+        background: linear-gradient(45deg, #0056b3, #00aaff); /* Gradiente mais escuro no hover */
+        box-shadow: 0 7px 20px rgba(0, 123, 255, 0.9); /* Brilho mais intenso no hover */
+        transform: translateY(-2px); /* Efeito de "levantar" */
+    }
+    .btn-volta { /* Novo estilo para o botão voltar */
+        background: linear-gradient(45deg, #ff416c, #ff4b2b); /* Gradiente de vermelho para laranja */
+        border: none;
+        box-shadow: 0 5px 15px rgba(255, 65, 108, 0.7); /* Brilho vermelho/laranja */
+        color: white; /* Texto branco */
+        margin-top: 30px; /* Espaçamento do topo */
+        width: auto; /* Deixa o botão se ajustar ao conteúdo */
+        display: inline-block; /* Para centralizar com text-align no pai */
+    }
+    .btn-volta:hover {
+        background: linear-gradient(45deg, #e0395d, #e03f2a); /* Gradiente mais escuro no hover */
+        box-shadow: 0 7px 20px rgba(255, 65, 108, 0.9); /* Brilho mais intenso no hover */
+        transform: translateY(-2px); /* Efeito de "levantar" */
+    }
+
+    /* Itens da lista (Resumo da Equipa) */
+    .list-group-item {
+        background-color: transparent !important; /* Transparente */
+        color: #e0e0e0; /* Cinza claro para o texto */
+        border-color: rgba(42, 62, 94, 0.5); /* Borda sutil e semi-transparente */
+        padding: 15px 0; /* Mais padding vertical */
+        font-size: 1.15em; /* Fonte maior */
+        display: flex; /* Garante que os badges se alinhem corretamente */
+        justify-content: space-between; /* Espaçamento entre label e badge */
+        align-items: center; /* Alinha verticalmente */
+    }
+    .list-group-item:last-child {
+        border-bottom: none; /* Remover borda do último item */
+    }
+
+    /* Badges (números e status) com mais estilo */
+    .badge {
+        font-size: 1.05em; /* Tamanho da fonte maior para visibilidade */
+        padding: 0.7em 1.2em; /* Padding maior */
+        border-radius: 15px; /* Mais arredondado */
+        font-weight: 700; /* Mais negrito */
+        text-shadow: 0 0 5px rgba(0,0,0,0.6); /* Sombra mais pronunciada para destacar o texto */
+        min-width: 60px; /* Largura mínima para uniformidade */
+        text-align: center;
+    }
+    .badge.bg-primary { background-color: #007bff !important; box-shadow: 0 0 12px rgba(0, 123, 255, 0.8); }
+    .badge.bg-success { background-color: #28a745 !important; box-shadow: 0 0 12px rgba(40, 167, 69, 0.8); }
+    .badge.bg-warning { background-color: #ffc107 !important; color: #333 !important; box-shadow: 0 0 12px rgba(255, 193, 7, 0.8); }
+    .badge.bg-info { background-color: #17a2b8 !important; box-shadow: 0 0 12px rgba(23, 162, 184, 0.8); }
+    .badge.bg-danger { background-color: #dc3545 !important; box-shadow: 0 0 12px rgba(220, 53, 69, 0.8); }
+
+    /* Estilos da tabela */
+    .table-responsive {
+        border-radius: 15px; /* Bordas mais arredondadas para o container da tabela */
+        overflow: hidden; /* Garante que as bordas arredondadas funcionem */
+        border: 1px solid #00bfff; /* Borda azul brilhante para a tabela */
+        box-shadow: 0 5px 20px rgba(0, 191, 255, 0.1); /* Sombra sutil com brilho azul */
+    }
+    .table-dark thead th {
+        background-color: #2a3e5e; /* Fundo do cabeçalho da tabela */
+        border-bottom: 3px solid #00e5ff; /* Linha azul clara mais grossa no cabeçalho */
+        color: #fff;
+        text-shadow: 0 0 10px rgba(0, 191, 255, 0.8); /* Brilho no texto do cabeçalho */
+        padding: 18px; /* Mais padding */
+        font-size: 1.1em;
+        vertical-align: middle; /* Alinhar texto ao meio */
+    }
+    .table-dark tbody tr {
+        background-color: rgba(26, 44, 78, 0.7); /* Fundo das linhas da tabela semi-transparente */
+        color: #e0e0e0; /* Cor do texto das linhas */
+        border-color: rgba(42, 62, 94, 0.5); /* Borda das linhas sutil */
+    }
+    .table-dark tbody tr:nth-of-type(odd) {
+        background-color: rgba(13, 26, 51, 0.7); /* Cor alternada para as linhas, também semi-transparente */
+    }
+    .table-dark tbody tr:hover {
+        background-color: rgba(58, 78, 110, 0.9); /* Efeito hover nas linhas, menos transparente */
+        color: #fff; /* Texto branco no hover */
+    }
+    .table-dark td {
+        padding: 15px 18px; /* Mais padding nas células */
+        vertical-align: middle; /* Alinhar texto ao meio */
+    }
+
+    /* Estilo para "Você ainda não convidou nenhum usuário." */
+    .text-white-50 {
+        color: #bbdefb !important; /* Cor mais clara para este texto */
+        font-style: italic; /* Itálico */
+        padding: 25px; /* Mais padding para centralizar bem */
+        font-size: 1.1em;
+    }
+
+    /* Centralização do conteúdo para mobile */
+    .main-content-container {
+        max-width: 550px; /* Largura máxima ligeiramente maior para melhor visualização */
+        margin: auto; /* Centraliza o container */
+        padding: 20px 15px; /* Padding nas laterais */
+        position: relative;
+        z-index: 1; /* Garante que o conteúdo fique acima do overlay do fundo */
+    }
+
+    /* Media Queries para responsividade */
+    @media (max-width: 576px) {
+        .card {
+            border-radius: 15px;
+            padding: 15px;
+        }
+        .card-title {
+            font-size: 1.4em;
+        }
+        .form-control {
+            padding: 10px 12px;
+            font-size: 1em;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 1em;
+        }
+        .list-group-item {
+            font-size: 1em;
+            padding: 10px 0;
+        }
+        .badge {
+            font-size: 0.9em;
+            padding: 0.5em 0.8em;
+        }
+        .table-dark thead th, .table-dark tbody td {
+            padding: 10px 12px;
+            font-size: 0.9em;
+        }
+    }
+</style>
+
+<div class="main-content-container py-4">
+    <h2 class="text-center text-white mb-4 text-glow">MINHA EQUIPA</h2>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Seu Código de Convite</h5>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" id="invitationCode" value="{{ request.scheme }}://{{ request.get_host }}/register/?invite_code={{ user.my_invitation_code }}" readonly>
+                <button class="btn btn-primary" type="button" id="copyInvitationCode">Copiar</button>
+            </div>
+            <small class="text-muted" style="color: #bbb !important;">Compartilhe este código para convidar amigos!</small>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Resumo da Equipa</h5>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Total de Convidados:
+                    <span class="badge bg-primary rounded-pill">{{ total_invited_users }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Convidados que Investiram:
+                    <span class="badge bg-success rounded-pill">{{ invested_users_count }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Convidados que Não Investiram:
+                    <span class="badge bg-warning text-dark rounded-pill">{{ non_invested_users_count }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Ganhos de Convite:
+                    <span class="badge bg-info rounded-pill">Kz {{ user.referral_income|floatformat:2 }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Meus Convidados</h5>
+            {% if invited_users %}
+            <div class="table-responsive">
+                <table class="table table-dark table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Telefone</th>
+                            <th scope="col">Status Investimento</th>
+                            <th scope="col">Data de Registro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for invited_user in invited_users %}
+                        <tr>
+                            <td>{{ invited_user.username }}</td>
+                            <td>
+                                {% if invited_user.current_product %}
+                                    <span class="badge bg-success">Investiu ({{ invited_user.current_product.level_name }})</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Não Investiu</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ invited_user.date_joined|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-white-50 text-center">Você ainda não convidou nenhum usuário.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="text-center mt-4 pb-4">
+        <a href="{% url 'home' %}" class="btn btn-volta btn-lg">Voltar ao Início</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('copyInvitationCode').addEventListener('click', function() {
+            var invitationCodeInput = document.getElementById('invitationCode');
+            invitationCodeInput.select();
+            invitationCodeInput.setSelectionRange(0, 99999); // Para dispositivos móveis
+
+            // Usando navigator.clipboard.writeText para copiar o texto
+            navigator.clipboard.writeText(invitationCodeInput.value).then(function() {
+                // Em vez de alert(), usaremos uma modal ou mensagem mais amigável em um ambiente real.
+                // Por simplicidade, para demonstração, mantivemos o alert() como feedback imediato.
+                alert('Código de convite copiado!');
+            }).catch(function(err) {
+                console.error('Falha ao copiar o código: ', err);
+                alert('Erro ao copiar o código. Por favor, copie manualmente.');
+            });
+        });
+    });
+</script>
+{% endblock %}

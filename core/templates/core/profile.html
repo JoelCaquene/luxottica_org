@@ -1,0 +1,384 @@
+{% load static %}
+{% load widget_tweaks %} {# Adicionado para usar os filtros de widget_tweaks #}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXOTTICA_ORG - Meu Perfil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    {# Adiciona o link para o Font Awesome para ícones, se não estiver vindo de base.html #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilos globais para o corpo da página */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0d1a33; /* Fundo azul escuro */
+            color: #fff; /* Cor do texto padrão para branco */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            justify-content: flex-start; /* Alinha o conteúdo ao topo */
+            align-items: center; /* Centraliza horizontalmente */
+            padding-top: 20px; /* Adiciona um padding no topo */
+            box-sizing: border-box;
+            /* IMAGEM DE FUNDO - Corrigido o caminho da imagem para 'image_bd2e46.png' */
+            background-image: url("{% static 'img/image_bd2e46.png' %}"); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6); /* Overlay escuro mais forte para contraste do texto */
+            z-index: 0;
+        }
+
+        /* Container principal do perfil */
+        .profile-container {
+            background-color: rgba(26, 44, 78, 0.9); /* Azul escuro semi-transparente para o container */
+            padding: 30px 25px; /* Mais padding */
+            border-radius: 20px; /* Bordas mais arredondadas */
+            box-shadow: 0 10px 30px rgba(0, 191, 255, 0.3); /* Sombra mais pronunciada com brilho azul */
+            width: 95%; /* Maior largura em mobile */
+            max-width: 500px; /* Largura máxima para desktop */
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+            border: 1px solid #00bfff; /* Borda azul vibrante */
+            position: relative;
+            z-index: 1; /* Garante que fique acima do overlay do fundo */
+            backdrop-filter: blur(5px); /* Efeito de desfoque de fundo */
+            margin-bottom: 80px; /* Espaço para o rodapé ou para rolar */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Título principal do perfil */
+        .profile-header h1 {
+            color: #00e676; /* Verde vibrante */
+            margin-bottom: 25px;
+            font-size: 2.2em; /* Tamanho maior */
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(0, 230, 118, 0.7), 0 0 25px rgba(0, 230, 118, 0.5); /* Brilho mais intenso */
+            font-weight: 700;
+        }
+
+        /* Seções de perfil (Dados Bancários, Alterar Senha) */
+        .profile-section {
+            background-color: rgba(31, 53, 84, 0.8); /* Azul escuro semi-transparente */
+            padding: 22px; /* Mais padding */
+            margin-bottom: 25px;
+            border-radius: 15px; /* Bordas arredondadas */
+            text-align: left;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); /* Sombra mais definida */
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 191, 255, 0.3); /* Borda sutil */
+        }
+        .profile-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px; /* Linha superior mais grossa */
+            background: linear-gradient(to right, #00bfff, #00e676); /* Gradiente vibrante */
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .profile-section h2 {
+            color: #00bfff; /* Azul vibrante */
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.6em; /* Tamanho maior */
+            border-bottom: 2px solid rgba(0, 191, 255, 0.5); /* Linha divisória mais grossa */
+            padding-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 191, 255, 0.6); /* Brilho no título da seção */
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Grupos de formulário */
+        .form-group {
+            margin-bottom: 20px; /* Mais espaço entre os grupos */
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #c4d8ed;
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+        .form-group input {
+            width: calc(100% - 24px); /* Ajusta a largura para o padding */
+            padding: 12px;
+            border: 1px solid #007bb6;
+            border-radius: 10px; /* Bordas mais arredondadas */
+            background-color: #0f1c2d;
+            color: #ffffff;
+            font-size: 1.05em;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra interna */
+        }
+        .form-group input:focus {
+            border-color: #00e676; /* Borda verde vibrante ao focar */
+            box-shadow: 0 0 12px rgba(0, 230, 118, 0.6), inset 0 2px 5px rgba(0, 0, 0, 0.5);
+            background-color: #1a2a40; /* Fundo ligeiramente mais claro ao focar */
+        }
+
+        /* Botões de atualização */
+        .btn-update {
+            background: linear-gradient(to right, #00bfff, #00e676); /* Gradiente vibrante */
+            color: #ffffff;
+            padding: 15px 30px; /* Mais padding */
+            border: none;
+            border-radius: 10px; /* Mais arredondado */
+            cursor: pointer;
+            font-size: 1.15em; /* Tamanho maior */
+            font-weight: 700;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 100%; /* Largura total */
+            margin-top: 15px; /* Mais espaço */
+            box-shadow: 0 6px 20px rgba(0, 191, 255, 0.4); /* Sombra com brilho */
+        }
+        .btn-update:hover {
+            transform: translateY(-3px); /* Efeito de "levantar" */
+            box-shadow: 0 8px 25px rgba(0, 191, 255, 0.7); /* Sombra mais intensa */
+        }
+        .btn-update:active {
+            transform: translateY(0);
+            box-shadow: 0 0 0 0 #00e676, 0 0 0 10px rgba(0, 230, 118, 0.5), 0 0 0 20px rgba(0, 230, 118, 0.3); /* Efeito de clique */
+        }
+
+        /* Botão "Voltar para o Dashboard" */
+        .btn-volta { /* Reutilizando o estilo do botão de equipe */
+            background: linear-gradient(45deg, #ff416c, #ff4b2b); /* Gradiente de vermelho para laranja */
+            border: none;
+            box-shadow: 0 5px 15px rgba(255, 65, 108, 0.7); /* Brilho vermelho/laranja */
+            color: white; /* Texto branco */
+            margin-top: 30px; /* Espaçamento do topo */
+            width: auto; /* Deixa o botão se ajustar ao conteúdo */
+            display: inline-block; /* Para centralizar com text-align no pai */
+            padding: 15px 30px; /* Adapta o padding */
+            border-radius: 10px; /* Adapta o border-radius */
+            font-size: 1.15em; /* Adapta o tamanho da fonte */
+            font-weight: 700;
+            text-decoration: none; /* Remove sublinhado padrão */
+            transition: all 0.3s ease;
+        }
+        .btn-volta:hover {
+            background: linear-gradient(45deg, #e0395d, #e03f2a); /* Gradiente mais escuro no hover */
+            box-shadow: 0 7px 20px rgba(255, 65, 108, 0.9); /* Brilho mais intenso no hover */
+            transform: translateY(-3px); /* Efeito de "levantar" */
+        }
+
+        /* Mensagens de feedback */
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin: 10px auto 20px auto; /* Centraliza e adiciona margin-bottom */
+            width: 100%;
+            max-width: 450px; /* Limita a largura */
+            text-align: center;
+            position: relative;
+            z-index: 2; /* Garante que as mensagens fiquem acima de outros elementos */
+        }
+        .messages li {
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        .messages .success { background-color: #28a745; }
+        .messages .error { background-color: #dc3545; }
+        .messages .info { background-color: #17a2b8; }
+        
+        /* Media Queries para responsividade */
+        @media (max-width: 480px) {
+            .profile-container {
+                padding: 20px 15px;
+                border-radius: 15px;
+            }
+            .profile-header h1 {
+                font-size: 1.8em;
+            }
+            .profile-section {
+                padding: 18px;
+                border-radius: 12px;
+            }
+            .profile-section h2 {
+                font-size: 1.4em;
+            }
+            .form-group label {
+                font-size: 1em;
+            }
+            .form-group input {
+                padding: 10px;
+                font-size: 0.95em;
+            }
+            .btn-update, .btn-volta {
+                padding: 12px 20px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1 class="glowing-text">Meu Perfil</h1>
+        </div>
+
+        {# Exibe as mensagens do Django #}
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="profile-section">
+            <h2><i class="fas fa-university"></i> Dados Bancários</h2>
+            <form action="{% url 'profile' %}" method="post">
+                {% csrf_token %}
+                {# Renderiza os campos do formulárioUserProfileUpdateForm com IDs únicos para evitar conflitos #}
+                <div class="form-group">
+                    <label for="{{ profile_form.full_name.id_for_label }}">{{ profile_form.full_name.label }}:</label>
+                    {{ profile_form.full_name|attr:"placeholder:Ex: José da Silva" }} {# Usando widget_tweaks #}
+                    {% if profile_form.full_name.errors %}
+                        <ul class="errorlist">
+                            {% for error in profile_form.full_name.errors %}
+                                <li style="color: #dc3545; font-size: 0.9em; margin-top: 5px;">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="id_profile_bank_name">{{ profile_form.bank_name.label }}:</label>
+                    {# CORRIGIDO: Usando widget_tweaks para 'id' e 'placeholder' #}
+                    {{ profile_form.bank_name|attr:"id:id_profile_bank_name"|attr:"placeholder:Ex: Banco Nacional" }}
+                    {% if profile_form.bank_name.errors %}
+                        <ul class="errorlist">
+                            {% for error in profile_form.bank_name.errors %}
+                                <li style="color: #dc3545; font-size: 0.9em; margin-top: 5px;">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="id_profile_iban">{{ profile_form.iban.label }}:</label>
+                    {# CORRIGIDO: Usando widget_tweaks para 'id' e 'placeholder' #}
+                    {{ profile_form.iban|attr:"id:id_profile_iban"|attr:"placeholder:Ex: AO06.0001.0000.0000.0000.0123.456" }}
+                    {% if profile_form.iban.errors %}
+                        <ul class="errorlist">
+                            {% for error in profile_form.iban.errors %}
+                                <li style="color: #dc3545; font-size: 0.9em; margin-top: 5px;">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <button type="submit" name="update_profile" class="btn-update">Atualizar Perfil</button>
+            </form>
+        </div>
+
+        <div class="profile-section">
+            <h2><i class="fas fa-lock"></i> Alterar Senha</h2>
+            <form action="{% url 'profile' %}" method="post">
+                {% csrf_token %}
+                {# Renderiza os campos do formulárioUserPasswordChangeForm. IDs já são únicos pelo Django. #}
+                <div class="form-group">
+                    <label for="{{ password_form.old_password.id_for_label }}">{{ password_form.old_password.label }}:</label>
+                    {{ password_form.old_password|attr:"placeholder:Digite sua senha atual" }}
+                    {% if password_form.old_password.errors %}
+                        <ul class="errorlist">
+                            {% for error in password_form.old_password.errors %}
+                                <li style="color: #dc3545; font-size: 0.9em; margin-top: 5px;">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ password_form.new_password1.id_for_label }}">{{ password_form.new_password1.label }}:</label>
+                    {{ password_form.new_password1|attr:"placeholder:Digite sua nova senha" }}
+                    {% if password_form.new_password1.errors %}
+                        <ul class="errorlist">
+                            {% for error in password_form.new_password1.errors %}
+                                <li style="color: #dc3545; font-size: 0.9em; margin-top: 5px;">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="{{ password_form.new_password2.id_for_label }}">{{ password_form.new_password2.label }}:</label>
+                    {{ password_form.new_password2|attr:"placeholder:Confirme sua nova senha" }}
+                    {% if password_form.new_password2.errors %}
+                        <ul class="errorlist">
+                            {% for error in password_form.new_password2.errors %}
+                                <li style="color: #dc3545; font-size: 0.9em; margin-top: 5px;">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <button type="submit" name="update_password" class="btn-update">Alterar Senha</button>
+            </form>
+        </div>
+
+        <div class="profile-section">
+            <h2><i class="fas fa-credit-card"></i> Minhas Contas Bancárias</h2>
+            {% if user_bank_accounts %}
+                {% for account in user_bank_accounts %}
+                    <div class="bank-account-item" style="background-color: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid rgba(0, 191, 255, 0.2);">
+                        <p><strong>Banco:</strong> {{ account.bank_name }}</p>
+                        <p><strong>Titular:</strong> {{ account.account_name }}</p>
+                        <p><strong>IBAN:</strong> {{ account.iban }}</p>
+                        {# Pode adicionar um formulário para atualizar/deletar contas individuais aqui se necessário #}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="text-align: center; color: #bbdefb; font-style: italic;">Nenhuma conta bancária cadastrada.</p>
+            {% endif %}
+
+            <h3 style="color: #81d4fa; margin-top: 30px; margin-bottom: 15px; font-size: 1.4em; text-align: center;">Adicionar Nova Conta</h3>
+            <form action="{% url 'profile' %}" method="post">
+                {% csrf_token %}
+                {# Renderiza os campos do formulárioUserBankAccountForm. IDs já são únicos pelo Django. #}
+                {% for field in add_bank_account_form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <ul class="errorlist">
+                                {% for error in field.errors %}
+                                    <li style="color: #dc3545; font-size: 0.9em; margin-top: 5px;">{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <button type="submit" name="add_bank_account" class="btn-update">Adicionar Conta Bancária</button>
+            </form>
+        </div>
+
+        <div class="text-center" style="width: 100%; margin-top: 30px;">
+            <a href="{% url 'home' %}" class="btn-volta btn-lg">Voltar para o Início</a>
+        </div>
+    </div>
+</body>
+</html>

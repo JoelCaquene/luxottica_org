@@ -1,0 +1,415 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXOTTICA_ORG - Retirada</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #0d47a1;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 0;
+        }
+        .container {
+            flex-grow: 1;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 25px;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 15px 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+        }
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+            width: 100%;
+            text-align: center;
+        }
+        .messages li {
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .messages .success { background-color: #28a745; }
+        .messages .error { background-color: #dc3545; }
+        .messages .info { background-color: #17a2b8; }
+        .info-section, .form-section {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .info-section h2, .form-section h2 {
+            text-align: center;
+            color: #81d4fa;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        .info-section p {
+            text-align: center;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        .info-section strong {
+            color: #81d4fa;
+        }
+        .info-section .balance-text {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #4CAF50;
+            text-shadow: 0 0 5px rgba(76, 175, 80, 0.7);
+        }
+        .account-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .account-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        .account-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        .account-item.selected {
+            border-color: #81d4fa;
+            background-color: rgba(129, 212, 250, 0.3);
+            box-shadow: 0 0 15px rgba(129, 212, 250, 0.6);
+        }
+        .account-item p {
+            margin: 5px 0;
+        }
+        .account-item .bank-name {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #e0f2f7;
+        }
+        .account-item .iban {
+            font-size: 0.9em;
+            color: #bbdefb;
+        }
+        .no-accounts-message {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .add-account-link {
+            display: block;
+            text-align: center;
+            background-color: #2196f3;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            margin-top: 15px;
+        }
+        .add-account-link:hover {
+            background-color: #1976d2;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #e0f2f7;
+        }
+        .form-group input[type="number"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 1em;
+        }
+        .amount-info {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .amount-info p {
+            margin: 5px 0;
+            font-size: 1em;
+        }
+        .amount-info strong {
+            color: #FFC107;
+        }
+        .submit-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+        .back-button {
+            display: block;
+            width: fit-content;
+            margin: 20px auto;
+            background-color: #f44336;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        .back-button:hover {
+            background-color: #d32f2f;
+        }
+        .message-box-container {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .message-box-content {
+            background-color: #1a237e;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            max-width: 90%;
+            text-align: center;
+            position: relative;
+        }
+        .message-box-content p {
+            margin: 0 0 20px 0;
+            font-size: 1.2em;
+        }
+        .message-box-content button {
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .message-box-content button:hover {
+            background-color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="header">
+            <h1>REALIZAR RETIRADA</h1>
+        </div>
+
+        <div class="info-section">
+            <p>Seu Saldo Disponível:</p>
+            <p class="balance-text">Kz {{ current_balance|floatformat:2 }}</p>
+            <p>Taxa de Retirada: <strong>{{ withdrawal_tax_percentage }}%</strong></p>
+        </div>
+
+        <div class="form-section">
+            <h2>1. Selecione a Conta Bancária</h2>
+            {% if user_bank_accounts %}
+                <div class="account-list">
+                    {% for account in user_bank_accounts %}
+                        <div class="account-item" data-id="{{ account.id }}">
+                            <p class="bank-name">{{ account.bank_name }}</p>
+                            <p>Titular: {{ account.account_name }}</p>
+                            <p class="iban">IBAN: {{ account.iban }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="no-accounts-message">Você ainda não cadastrou nenhuma conta bancária para retirada.</p>
+                <a href="{% url 'profile' %}" class="add-account-link">
+                    Adicionar Conta Bancária
+                </a>
+                <p style="text-align: center; font-size: 0.9em; margin-top: 10px; color: #bbdefb;">Você precisa adicionar uma conta bancária no seu Perfil antes de fazer uma retirada.</p>
+            {% endif %}
+
+            {% if user_bank_accounts %}
+                <h2>2. Insira o Valor da Retirada</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    <!-- CORREÇÃO AQUI: Altera o nome do campo para 'user_bank_account' -->
+                    <input type="hidden" name="user_bank_account" id="selected-account-id-input" required>
+
+                    <div class="form-group">
+                        <label for="id_amount">Valor a Retirar (Kz)</label>
+                        <input type="number" name="amount" id="id_amount" placeholder="Ex: 10000" min="0.01" step="0.01" required>
+                    </div>
+
+                    <div class="amount-info">
+                        <p>Valor da Taxa ({{ withdrawal_tax_percentage }}%): <strong id="tax-amount">Kz 0.00</strong></p>
+                        <p>Valor a Receber: <strong id="amount-to-receive">Kz 0.00</strong></p>
+                    </div>
+                    
+                    <button type="submit" class="submit-button">Solicitar Retirada</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <a href="{% url 'home' %}" class="back-button">Voltar ao Início</a>
+
+    <div id="message-box" class="message-box-container">
+        <div class="message-box-content">
+            <p id="message-box-text"></p>
+            <button id="message-box-ok-button">OK</button>
+        </div>
+    </div>
+
+    <script>
+        function showMessageBox(message) {
+            const messageBox = document.getElementById('message-box');
+            const messageBoxText = document.getElementById('message-box-text');
+            messageBoxText.textContent = message;
+            messageBox.style.display = 'flex';
+        }
+
+        document.getElementById('message-box-ok-button').addEventListener('click', () => {
+            document.getElementById('message-box').style.display = 'none';
+        });
+
+        const accountItems = document.querySelectorAll('.account-item');
+        const selectedAccountIdInput = document.getElementById('selected-account-id-input');
+        const amountInput = document.getElementById('id_amount');
+        const taxAmountDisplay = document.getElementById('tax-amount');
+        const amountToReceiveDisplay = document.getElementById('amount-to-receive');
+        
+        const withdrawalTaxPercentage = parseFloat("{{ withdrawal_tax_percentage|default:0 }}");
+        const currentBalance = parseFloat("{{ current_balance|floatformat:2|default:0 }}");
+
+        accountItems.forEach(item => {
+            item.addEventListener('click', () => {
+                accountItems.forEach(b => b.classList.remove('selected'));
+                item.classList.add('selected');
+                selectedAccountIdInput.value = item.dataset.id;
+                calculateAmounts();
+            });
+        });
+
+        amountInput.addEventListener('input', calculateAmounts);
+
+        function calculateAmounts() {
+            const amount = parseFloat(amountInput.value);
+            if (isNaN(amount) || amount <= 0) {
+                taxAmountDisplay.textContent = 'Kz 0.00';
+                amountToReceiveDisplay.textContent = 'Kz 0.00';
+                return;
+            }
+
+            const taxAmount = amount * (withdrawalTaxPercentage / 100);
+            const amountToReceive = amount - taxAmount;
+
+            taxAmountDisplay.textContent = `Kz ${taxAmount.toFixed(2)}`;
+            amountToReceiveDisplay.textContent = `Kz ${amountToReceive.toFixed(2)}`;
+        }
+
+        document.querySelector('form').addEventListener('submit', function(event) {
+            if (!selectedAccountIdInput.value) {
+                showMessageBox('Por favor, selecione uma conta bancária para retirada.');
+                event.preventDefault();
+                return;
+            }
+
+            const amount = parseFloat(amountInput.value);
+            if (isNaN(amount) || amount <= 0) {
+                showMessageBox('Por favor, insira um valor válido para retirada.');
+                event.preventDefault();
+                return;
+            }
+
+            if (amount > currentBalance) {
+                showMessageBox(`Saldo insuficiente. Seu saldo disponível é Kz ${currentBalance.toFixed(2)}.`);
+                event.preventDefault();
+                return;
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstAccount = document.querySelector('.account-item');
+            if (firstAccount) {
+                firstAccount.classList.add('selected');
+                selectedAccountIdInput.value = firstAccount.dataset.id;
+                calculateAmounts();
+            }
+        });
+    </script>
+</body>
+</html>

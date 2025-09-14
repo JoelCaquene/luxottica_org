@@ -1,0 +1,37 @@
+# A blueprint for a Django app on Render.
+services:
+  - type: web
+    name: luxottica_org
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn luxottica_org.wsgi:application"
+    plan: free # ou 'pro' ou 'starter' conforme sua necessidade
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: luxottica_org_db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
+
+  - type: worker
+    name: django-migrations
+    env: python
+    buildCommand: "echo 'No build command for worker'"
+    startCommand: "python manage.py migrate --noinput"
+    plan: free # ou 'pro' ou 'starter' conforme sua necessidade
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: luxottica_org_db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+
+  - type: database
+    name: luxottica_org_db
+    databaseName: luxottica_orgdb
+    plan: free # ou 'pro' ou 'starter' conforme sua necessidade
+    
